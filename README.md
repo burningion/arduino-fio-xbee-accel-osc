@@ -22,19 +22,26 @@ just wing it, and run into walls like I did.
 List of Hardware Requirements
 ------------------------------
 
-*Arduino FIO v3.0* - I got mine from SparkFun, make sure you take the XBee off when programming it, because otherwise the programmer won't work
-*XBee V2* - I used the mesh version of XBee because I plan on having multiple inputs. I got the PRO version because it means I can wirelessly control things from very far away.
-*LiPo battery* - I used the biggest one I could find, that was 3.3v 
-*ADXL345* - Super precise and fast, and complete overkill, just like every other part of this hack. We'll use it over i2c, because that's supported already. 
-*XBee X2e Gateway* - Embedded Linux device that runs a stripped version of Python 2.7. Most OSC libraries are in Python3000 world now, and it took me a while to find 2.7 code. Fun.
-*Solder & Header Pins* - There is no right way to wire up header pins on the FIO for breadboard use. Either you can't press the reset button, or you can't easily access the XBee to reprogram.
-*FTDI Cable* - Don't worry, I didn't have one of these either. More money to burn through. 
+**Arduino FIO v3.0** - I got mine from SparkFun, make sure you take the XBee off when programming it, because otherwise the programmer won't work
+
+**XBee V2** - I used the mesh version of XBee because I plan on having multiple inputs. I got the PRO version because it means I can wirelessly control things from very far away.
+
+**LiPo battery** - I used the biggest one I could find, that was 3.3v 
+
+**ADXL345** - Super precise and fast, and complete overkill, just like every other part of this hack. We'll use it over i2c, because that's supported already. 
+
+**XBee X2e Gateway** - Embedded Linux device that runs a stripped version of Python 2.7. Most OSC libraries are in Python3000 world now, and it took me a while to find 2.7 code. Fun.
+
+**Solder & Header Pins** - There is no right way to wire up header pins on the FIO for breadboard use. Either you can't press the reset button, or you can't easily access the XBee to reprogram.
+
+**FTDI Cable** - Don't worry, I didn't have one of these either. More money to burn through. 
 
 Software Requirements
 ----------------------
 
-*Ableton Live* - This is just what I used. There's free demo over on their site, it's pretty amazing software.
-*PureData Extended* - We'll use this to convert the OSC data coming in via UDP to MIDI, so we can select effects and feelings for different virtual pedals.
+**Ableton Live** - This is just what I used. There's free demo over on their site, it's pretty amazing software.
+
+**PureData Extended** - We'll use this to convert the OSC data coming in via UDP to MIDI, so we can select effects and feelings for different virtual pedals.
 
 Getting Started
 ----------------
@@ -51,8 +58,8 @@ Before you put on the XBee Pro, try plugging in the FTDI headers and using the c
 Tools -> Board -> Arduino Fio before programming. Send the program to the device by clicking the upload button. If everything is wired up properly, you should be able to go to Tools ->
 Serial Monitor, set your baud rate to 9600, and see some numbers looking like this:
 
-11:33:00
-22:11:00
+    11:33:00
+    22:11:00
 
 As you move the breadboard around, you should see those numbers start to change.
 
