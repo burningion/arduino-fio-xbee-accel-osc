@@ -77,10 +77,14 @@ your X2e:
 Then, you can log in and run the awesome python script that converts the incoming packets to UDP packets to send to your server. Oh wait, you don't have a server, do you?
 
 Run PureData Extended (it's free and runs on everything), press command+1 on Mac (I don't know what it is elsewhere), and type in "import mrpeach". Then command+1 again,
-and type in "udpreceive 9000", command+1 again, "unpackOSC", and finally, command+1 "print".
+and type in "udpreceive 9000", command+1 again, "unpackOSC", and finally, command+1 "print". 
 
 When you're in PureData you'll see some weird looking rectangles on all the boxes you just made. This is used to connect things. When you hover over them, they make circles to connect things.
 Connect the bottom left of "udpreceive" to the top left of "unpackOSC", and the bottom left of "unpackOSC" to "print". Press command+e to get out of edit mode and make your OSC server live.
+
+Should look like this:
+
+![](https://raw.github.com/burningion/arduino-fio-xbee-accel-osc/master/images/pd.png)
 
 Congratulations, you are now an edgy electronic musician.
 
