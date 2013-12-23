@@ -65,6 +65,6 @@ while 1:
         for reading in lister:
             msg.append(int(reading), typehint='i')
         b.send(msg)
-        payload = []
+    payload = []
 
     time.sleep(.05)
