@@ -15,65 +15,56 @@ sd.bind(("", 0xe8, 0, 0))
 # Configure the socket for non-blocking operation:
 sd.setblocking(0) 
 
+OSC_SERVER_IP = "192.168.1.148" # CHANGE TO YOUR OSC SERVER
+OSC_SERVER_PORT = 9000 # CHANGE TO YOUR OSC SERVER PORT
+
+b = OSC.OSCClient()
+b.connect((OSC_SERVER_IP, OSC_SERVER_PORT))
+
+
+''' Uncomment this below to diagnose your OSC connection first.
+
 msg = OSC.OSCMessage("/hey")
 msg.append('hello')
-b = OSC.OSCClient()
-b.connect(('192.168.1.148', 9000))
 b.send(msg)
- 
-def int32(x):
-  if x>0xFFFFFFFF:
-    raise OverflowError
-  if x>0x7FFFFFFF:
-    x=int(0x100000000-x)
-    if x<2147483648:
-      return -x
-    else:
-      return -2147483648
-  return x
+''' 
 
-try:
-    # Initialize state variables: 
-    payload = ""
-    src_addr = () 
+# Initialize state variables: 
+payload = ""
+src_addr = () 
  
     # Forever: 
  
-    while 1: 
-        # Reset the ready lists:
-        rlist, wlist = ([], [])
-        if len(payload) == 0:
+while 1: 
+    # Reset the ready lists:
+    rlist, wlist = ([], [])
+    if len(payload) == 0:
             # If the payload buffer is empty,
             # add socket to read list: 
-            rlist = [sd]
+        rlist = [sd]
  
-        else: 
-            # Otherwise, add the socket to the
-            # write list: 
-            wlist = [sd] 
- 
- 
-        # Block on select: 
-        rlist, wlist, xlist = select(rlist, wlist, []) 
+    else: 
+        # Otherwise, add the socket to the
+        # write list: 
+        wlist = [sd] 
  
  
-        # Is the socket readable? 
-        if sd in rlist: 
-            # Receive from the socket: 
-            payload, src_addr = sd.recvfrom(255)
-            # If the packet was "quit", then quit:
-            if payload == "quit": 
-                raise Exception, "quit received"
+    # Block on select: 
+    rlist, wlist, xlist = select(rlist, wlist, []) 
+ 
+ 
+    # Is the socket readable? 
+    if sd in rlist: 
+        # Receive from the socket: 
+        payload, src_addr = sd.recvfrom(255)
+        # If the packet was "quit", then quit:
         msg = OSC.OSCMessage("/hey")
-        list = payload.split(':')
-        for reading in list:
-            msg.append(int32(int(reading)), typehint='t')
-        b = OSC.OSCClient()
-        b.connect(('192.168.1.148', 9000))
+        lister = payload.split(':')
+        if len(lister) != 3:
+            continue # bad data, man. don't try and save it, just move on
+        for reading in lister:
+            msg.append(int(reading), typehint='i')
         b.send(msg)
+        payload = []
 
-        print payload
-
-except Exception, e:
-    # upon an exception, close the socket:
-    sd.close()
+    time.sleep(.05)

@@ -725,6 +725,17 @@ def OSCBlob(next):
 
 	return binary
 
+def int32(x):
+  if x>0xFFFFFFFF:
+    raise OverflowError
+  if x>0x7FFFFFFF:
+    x=int(0x100000000-x)
+    if x<2147483648:
+      return -x
+    else:
+      return -2147483648
+  return x
+
 def OSCArgument(next, typehint=None):
 	""" Convert some Python types to their
 	OSC binary representations, returning a
@@ -735,7 +746,7 @@ def OSCArgument(next, typehint=None):
 			binary  = struct.pack(">f", float(next))
 			tag = 'f'
 		elif type(next) in IntTypes:
-			binary  = struct.pack(">i", int(next))
+			binary  = struct.pack(">i", int32(int(next)))
 			tag = 'i'
 		else:
 			binary  = OSCString(next)
@@ -758,7 +769,7 @@ def OSCArgument(next, typehint=None):
 			tag = 's'
 	elif typehint == 'i':
 		try:
-			binary  = struct.pack(">i", int(next))
+			binary  = struct.pack(">i", int32(int(next)))
 			tag = 'i'
 		except ValueError:
 			binary  = OSCString(next)
