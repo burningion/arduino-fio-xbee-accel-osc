@@ -7,6 +7,8 @@ converting as much money into microcontrollers as possible.
 
 Well, look no further. You can now make it so that doing cool things like this:
 
+![](https://raw.github.com/burningion/arduino-fio-xbee-accel-osc/master/images/guitar_solo.jpg)
+
 Actually has an effect on the sounds coming out of your guitar.
 
 We do this by hooking up an accelerometer to the headstock of your guitar, and using an Arduino FIO with the XBee v2 to send the data in real time to an X2e
@@ -98,7 +100,7 @@ And that's it! Magic OSC being sent to control... everything!
 Congratulations, you are now wizard and can now cast magic missle... effects from your guitar!
 
 
-
+![](https://raw.github.com/burningion/arduino-fio-xbee-accel-osc/master/images/hulkster.gif)
 
 
 
