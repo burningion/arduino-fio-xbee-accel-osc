@@ -46,6 +46,8 @@ ADXL345 accel;
 
 int16_t ax, ay, az;
 
+uint8_t doubleWindow = 500;
+
 #define LED_PIN 13 // (Arduino is 13, Teensy is 6)
 bool blinkState = false;
 
@@ -67,19 +69,39 @@ void setup() {
     Serial.println(accel.testConnection() ? "ADXL345 connection successful" : "ADXL345 connection failed");
 
     // configure LED for output
+    // accel.setDoubleTapWindow(doubleWindow);
+    accel.setTapAxisXEnabled(true);
+    accel.setTapAxisYEnabled(true);
+    accel.setTapAxisZEnabled(true);
     pinMode(LED_PIN, OUTPUT);
 }
 
 void loop() {
     // read raw accel measurements from device
-    accel.getAcceleration(&ax, &ay, &az);
+    // accel.getAcceleration(&ax, &ay, &az);
 
     // display tab-separated accel x/y/z values
-    Serial.print(ax);
+    // Serial.print(ax);
+    if accel.getActivitySourceX() {
+      Serial.print("1");
+    } else {
+      Serial.print("0");
+    }
     Serial.print(":"); 
-    Serial.print(ay); 
+    if accel.getActivitySourceY() {
+      Serial.print("1");
+    } else {
+      Serial.print("0");
+    }    
+    //Serial.print(ay); 
     Serial.print(":");
-    Serial.println(az);
+    if accel.getActivitySourceZ() {
+      Serial.print("1");
+    } else {
+      Serial.print("0");
+    }
+    
+    //Serial.println(az);
     delay(60);
     // blink LED to indicate activity
     blinkState = !blinkState;
