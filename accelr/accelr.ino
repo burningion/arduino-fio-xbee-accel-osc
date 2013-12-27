@@ -46,8 +46,8 @@ ADXL345 accel;
 
 int16_t ax, ay, az;
 
-uint8_t THRESH_TAP = 20;
-uint8_t TAP_DUR = 60;
+uint8_t THRESH_TAP = 64;
+uint8_t TAP_DUR = 16;
 uint8_t TAP_PIN = 64;
 volatile uint8_t myInts[3] = {0,0,0};
 #define LED_PIN 13 // (Arduino is 13, Teensy is 6)
@@ -71,16 +71,17 @@ void setup() {
     // initialize device
     Serial.println("Initializing I2C devices...");
     accel.initialize();
-    
+    delay(400);
     // verify connection
     Serial.println("Testing device connections...");
     Serial.println(accel.testConnection() ? "ADXL345 connection successful" : "ADXL345 connection failed");
-    delay(400);
+    
     // configure LED for output
     //accel.setDoubleTapWindow(doubleWindow);
     accel.setTapDuration(TAP_DUR);
     accel.setTapThreshold(THRESH_TAP);
     accel.setIntSingleTapPin(TAP_PIN);
+    accel.setIntDataReadyEnabled(true);
     accel.setIntSingleTapEnabled(true);
     accel.setTapAxisXEnabled(true);
     accel.setTapAxisYEnabled(true);
@@ -88,14 +89,15 @@ void setup() {
     
     accel.getAcceleration(&ax, &ay, &az);
     hasOne = false;
-    attachInterrupt(3, whoops, CHANGE);
-    attachInterrupt(2, whoops, CHANGE);
+    attachInterrupt(0, whoops, LOW);
+    attachInterrupt(1, whoops, LOW);
     pinMode(LED_PIN, OUTPUT);
 }
 
 void loop() {
     // read raw accel measurements from device
-    //accel.getAcceleration(&ax, &ay, &az);
+    accel.getAcceleration(&ax, &ay, &az);
+    //Serial.println(ax);
     //myInts[2] = myInts[1];
     //myInts[1] = myInts[0];
     //myInts[0] = ax;
@@ -124,10 +126,10 @@ void whoops() {
   if (accel.getTapSourceX()) {
     myInts[0] = 1;
    }
-  if (accel.getTapSourceX()) {
+  if (accel.getTapSourceY()) {
     myInts[1] = 1;
    }
-  if (accel.getTapSourceX()) {
+  if (accel.getTapSourceZ()) {
     myInts[2] = 1;
    }
    hasOne = true;
