@@ -46,15 +46,18 @@ ADXL345 accel;
 
 int16_t ax, ay, az;
 
-uint8_t doubleWindow = 500;
-uint8_t myInts[3] = {0,0,0};
+uint8_t THRESH_TAP = 20;
+uint8_t TAP_DUR = 60;
+uint8_t TAP_PIN = 64;
+volatile uint8_t myInts[3] = {0,0,0};
 #define LED_PIN 13 // (Arduino is 13, Teensy is 6)
 bool blinkState = false;
-bool hasOne = false;
-
+volatile bool hasOne = false;
+/*
 int16_t X[3] = {0, 0, 0};
 int16_t Y[3] = {0, 0, 0};
 int16_t Z[3] = {0, 0, 0};
+*/
 
 void setup() {
     // join I2C bus (I2Cdev library doesn't do this automatically)
@@ -68,49 +71,36 @@ void setup() {
     // initialize device
     Serial.println("Initializing I2C devices...");
     accel.initialize();
-
+    
     // verify connection
     Serial.println("Testing device connections...");
     Serial.println(accel.testConnection() ? "ADXL345 connection successful" : "ADXL345 connection failed");
-
+    delay(400);
     // configure LED for output
-    // accel.setDoubleTapWindow(doubleWindow);
+    //accel.setDoubleTapWindow(doubleWindow);
+    accel.setTapDuration(TAP_DUR);
+    accel.setTapThreshold(THRESH_TAP);
+    accel.setIntSingleTapPin(TAP_PIN);
+    accel.setIntSingleTapEnabled(true);
     accel.setTapAxisXEnabled(true);
     accel.setTapAxisYEnabled(true);
     accel.setTapAxisZEnabled(true);
-    accel.getAcceleration(&ax, &ay, &az);
     
+    accel.getAcceleration(&ax, &ay, &az);
+    hasOne = false;
+    attachInterrupt(3, whoops, CHANGE);
+    attachInterrupt(2, whoops, CHANGE);
     pinMode(LED_PIN, OUTPUT);
 }
 
 void loop() {
     // read raw accel measurements from device
-    accel.getAcceleration(&ax, &ay, &az);
-    //Serial.println(ax);
-    hasOne = false;
-    
-    // display tab-separated accel x/y/z values
-    // Serial.print(ax);
-    if (accel.getActivitySourceX()) {
-      uint8_t a = accel.getIntSingleTapSource();
-      Serial.print("here's a:");
-      Serial.println(a);
-      Serial.print(accel.getTapThreshold());
-      myInts[0] = 1;
-      hasOne = true;
-    } 
-    
-    if (accel.getActivitySourceY()) {
-      myInts[1] = 1;
-      hasOne = true;
-    } 
-    //Serial.print(ay); 
-    
-    if (accel.getActivitySourceZ()) {
-      myInts[2] = 1;
-      hasOne = true;
-    } 
-    
+    //accel.getAcceleration(&ax, &ay, &az);
+    //myInts[2] = myInts[1];
+    //myInts[1] = myInts[0];
+    //myInts[0] = ax;
+    //hasOne = false;
+  
     if (hasOne) {
       Serial.print(myInts[0]);
       Serial.print(":");
@@ -121,9 +111,25 @@ void loop() {
       myInts[1] = 0;
       myInts[2] = 0;
       delay(1000);
+      hasOne = false;
     }
+    
     delay(60);
     // blink LED to indicate activity
     blinkState = !blinkState;
     digitalWrite(LED_PIN, blinkState);
+}
+
+void whoops() {   
+  if (accel.getTapSourceX()) {
+    myInts[0] = 1;
+   }
+  if (accel.getTapSourceX()) {
+    myInts[1] = 1;
+   }
+  if (accel.getTapSourceX()) {
+    myInts[2] = 1;
+   }
+   hasOne = true;
+   Serial.println('yuss');
 }
