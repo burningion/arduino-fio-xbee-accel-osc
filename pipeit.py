@@ -59,6 +59,7 @@ while 1:
         payload, src_addr = sd.recvfrom(255)
         # If the packet was "quit", then quit:
         msg = OSC.OSCMessage("/hey")
+        print str(payload)
         lister = payload.split(':')
         if len(lister) != 3:
             continue # bad data, man. don't try and save it, just move on

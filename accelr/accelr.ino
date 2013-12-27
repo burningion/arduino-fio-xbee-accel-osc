@@ -47,9 +47,14 @@ ADXL345 accel;
 int16_t ax, ay, az;
 
 uint8_t doubleWindow = 500;
-
+uint8_t myInts[3] = {0,0,0};
 #define LED_PIN 13 // (Arduino is 13, Teensy is 6)
 bool blinkState = false;
+bool hasOne = false;
+
+int16_t X[3] = {0, 0, 0};
+int16_t Y[3] = {0, 0, 0};
+int16_t Z[3] = {0, 0, 0};
 
 void setup() {
     // join I2C bus (I2Cdev library doesn't do this automatically)
@@ -73,35 +78,50 @@ void setup() {
     accel.setTapAxisXEnabled(true);
     accel.setTapAxisYEnabled(true);
     accel.setTapAxisZEnabled(true);
+    accel.getAcceleration(&ax, &ay, &az);
+    
     pinMode(LED_PIN, OUTPUT);
 }
 
 void loop() {
     // read raw accel measurements from device
-    // accel.getAcceleration(&ax, &ay, &az);
-
+    accel.getAcceleration(&ax, &ay, &az);
+    //Serial.println(ax);
+    hasOne = false;
+    
     // display tab-separated accel x/y/z values
     // Serial.print(ax);
-    if accel.getActivitySourceX() {
-      Serial.print("1");
-    } else {
-      Serial.print("0");
-    }
-    Serial.print(":"); 
-    if accel.getActivitySourceY() {
-      Serial.print("1");
-    } else {
-      Serial.print("0");
-    }    
-    //Serial.print(ay); 
-    Serial.print(":");
-    if accel.getActivitySourceZ() {
-      Serial.print("1");
-    } else {
-      Serial.print("0");
-    }
+    if (accel.getActivitySourceX()) {
+      uint8_t a = accel.getIntSingleTapSource();
+      Serial.print("here's a:");
+      Serial.println(a);
+      Serial.print(accel.getTapThreshold());
+      myInts[0] = 1;
+      hasOne = true;
+    } 
     
-    //Serial.println(az);
+    if (accel.getActivitySourceY()) {
+      myInts[1] = 1;
+      hasOne = true;
+    } 
+    //Serial.print(ay); 
+    
+    if (accel.getActivitySourceZ()) {
+      myInts[2] = 1;
+      hasOne = true;
+    } 
+    
+    if (hasOne) {
+      Serial.print(myInts[0]);
+      Serial.print(":");
+      Serial.print(myInts[1]);
+      Serial.print(":"); 
+      Serial.println(myInts[2]);
+      myInts[0] = 0;
+      myInts[1] = 0;
+      myInts[2] = 0;
+      delay(1000);
+    }
     delay(60);
     // blink LED to indicate activity
     blinkState = !blinkState;
