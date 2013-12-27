@@ -131,5 +131,4 @@ void whoops() {
     myInts[2] = 1;
    }
    hasOne = true;
-   Serial.println('yuss');
 }
